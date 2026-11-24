@@ -1,4 +1,4 @@
-// All site content lives here. Facts come from the resume; do not add claims it does not make.
+// Portfolio content is backed by the résumé, public project records and contribution history.
 
 export type Link = {
   label: string;
@@ -7,9 +7,11 @@ export type Link = {
   enabled: boolean;
 };
 
+export const projectCategories = ["Full stack", "AI", "Data", "Security"] as const;
+
 export type Project = {
   title: string;
-  category: "Full stack" | "AI" | "Data";
+  category: (typeof projectCategories)[number];
   context: string;
   date?: string;
   summary: string;
@@ -17,6 +19,13 @@ export type Project = {
   stack: string[];
   links: Link[];
   image?: { src: string; alt: string; width: number; height: number };
+};
+
+type Hackathon = {
+  title: string;
+  date: string;
+  summary: string;
+  links: Link[];
 };
 
 export const profile = {
@@ -60,6 +69,7 @@ export const projects: Project[] = [
     title: "Full-Stack Gamified Wellness Web App",
     category: "Full stack",
     context: "Academic project, Back-End Development",
+    date: "Jan to Feb 2026",
     summary:
       "A website that combines wellness tracking with a points-based detective game. The game has multiple narrative outcomes.",
     points: [
@@ -69,6 +79,7 @@ export const projects: Project[] = [
     stack: ["Node.js", "Express", "MySQL"],
     links: [
       { label: "Live demo", href: "https://bed-ca2-sxz6.onrender.com", enabled: true },
+      { label: "Code", href: "https://github.com/chonghaoooi/BED-CA2", enabled: true },
     ],
     image: {
       src: "/wellness.png",
@@ -76,6 +87,24 @@ export const projects: Project[] = [
       width: 1280,
       height: 640,
     },
+  },
+  {
+    title: "MemWorker",
+    category: "AI",
+    context: "Dell InnovateDash 2026 finalist",
+    date: "Jun 2026",
+    summary:
+      "A casework prototype for the Singapore Children's Society challenge. It turns notes and recordings into case summaries, follow-ups and shared caseload context.",
+    points: [
+      "I helped shape the daily casework interface and added automatic follow-ups from reminders in transcripts.",
+      "I prepared the Railway API deployment bundle. The team used Redis-backed workers to keep longer AI tasks out of the request path.",
+    ],
+    stack: ["React Native", "Expo", "Node.js", "Supabase", "Redis", "RAG"],
+    links: [
+      { label: "Code", href: "https://github.com/NachikethReddyY/MemWorker", enabled: true },
+      { label: "Follow-up commit", href: "https://github.com/NachikethReddyY/MemWorker/commit/5047065e442b051af7b74fa41cdecae36649a2b8", enabled: true },
+      { label: "Deployment PR", href: "https://github.com/NachikethReddyY/MemWorker/pull/17", enabled: true },
+    ],
   },
   {
     title: "EventNest",
@@ -150,6 +179,7 @@ export const projects: Project[] = [
     title: "LinkedIn Job Postings Salary Analysis",
     category: "Data",
     context: "Academic project, Programming for Data Analytics",
+    date: "Apr to Jun 2026",
     summary: "A comparison of pay by experience level and remote status.",
     points: [
       "I cleaned and merged course-provided data on 123,849 job postings. Converting mixed pay periods into annual salaries left 27,556 usable rows.",
@@ -169,8 +199,198 @@ export const projects: Project[] = [
       "I built a bot debugger that shows each turn's model calls, tool calls and failures.",
       "I fixed memory search so that it covers every saved fact.",
     ],
-    stack: ["TypeScript", "Bun", "React"],
-    links: [{ label: "Code", href: "https://github.com/AgniAnt/AgniBot", enabled: true }],
+    stack: ["TypeScript", "Bun", "React", "SwiftUI"],
+    links: [
+      { label: "Code", href: "https://github.com/AgniAnt/AgniBot", enabled: true },
+      { label: "Merged PRs", href: "https://github.com/AgniAnt/AgniBot/pulls?q=is%3Apr+is%3Amerged+author%3Achonghaoooi", enabled: true },
+    ],
+  },
+  {
+    title: "AgniReview",
+    category: "AI",
+    context: "AgniAnt team project, in progress",
+    summary: "An in-house tool for AI-assisted code review.",
+    points: [],
+    stack: [],
+    links: [{ label: "Code", href: "https://github.com/AgniAnt/aReview", enabled: true }],
+  },
+  {
+    title: "SnapSell Security Review",
+    category: "Security",
+    context: "Secure Coding coursework, pair project",
+    date: "Jul to Aug 2026",
+    summary: "A security assessment of a Node.js marketplace against the 2025 OWASP Top 10.",
+    points: [
+      "We documented 10 findings across five categories and proposed fixes, including parameterised queries for database access.",
+    ],
+    stack: ["Node.js", "MySQL", "Burp Suite", "Postman"],
+    links: [],
+  },
+  {
+    title: "RoadRunners",
+    category: "AI",
+    context: "TheFirst Spark 2026: Youth Symposium",
+    date: "Jun 2026",
+    summary: "An AI-guided learning app with branching career roadmaps and interactive coding lessons.",
+    points: ["I made the generated roadmap steps persist after onboarding so the journey could be reopened."],
+    stack: ["Next.js", "TypeScript", "Supabase", "Monaco", "ElevenLabs"],
+    links: [
+      { label: "Devpost", href: "https://devpost.com/software/roadrunners-zojclf", enabled: true },
+      { label: "Roadmap PR", href: "https://github.com/NachikethReddyY/roadrunners/pull/1", enabled: true },
+    ],
+  },
+  {
+    title: "ReDDone",
+    category: "AI",
+    context: "Team project, GitHub contributor",
+    summary: "An approval-based workflow that uses market evidence to generate and deploy a Next.js app.",
+    points: ["I added selectable AI models for workflows and prepared the backend for Railway deployment."],
+    stack: ["Next.js", "Node.js", "PostgreSQL", "Railway"],
+    links: [
+      { label: "Model selection PR", href: "https://github.com/NachikethReddyY/reddone/pull/17", enabled: true },
+      { label: "Railway PR", href: "https://github.com/NachikethReddyY/reddone/pull/3", enabled: true },
+    ],
+  },
+  {
+    title: "Lumina",
+    category: "AI",
+    context: "Ralphthon @SG",
+    date: "May 2026",
+    summary: "A team prototype that turns raw bug reports into structured GitHub issues and routes them based on developer workload and availability.",
+    points: [],
+    stack: [],
+    links: [
+      { label: "Team recap", href: "https://www.linkedin.com/posts/cj-tee_today-i-and-friends-yeddula-nachiketh-reddy-activity-7461801348322234368-y_d7", enabled: true },
+    ],
+  },
+  {
+    title: "kaki",
+    category: "Full stack",
+    context: "MAJU Hackathon 2026",
+    date: "Sep 2026",
+    summary: "A mobile-first community app for students in Singapore to find campus activities, study together and connect through clubs and peer mentorship.",
+    points: ["The prototype includes activity discovery, join flows and privacy controls for peer support."],
+    stack: ["React", "TypeScript", "Node.js", "SQLite"],
+    links: [
+      { label: "Code", href: "https://github.com/chonghaoooi/kaki", enabled: true },
+      { label: "Live demo", href: "https://kaki-orcin.vercel.app/", enabled: true },
+    ],
+  },
+  {
+    title: "TrustLadder",
+    category: "AI",
+    context: "OCBC Ignite Challenge 2026",
+    date: "Oct 2026",
+    summary: "A prototype for bank staff to review AI-generated draft responses, inspect the supporting evidence and record an approval decision.",
+    points: [],
+    stack: ["JavaScript", "HTML", "Vercel"],
+    links: [
+      { label: "Code", href: "https://github.com/chonghaoooi/OCBC-Trust-Ladder", enabled: true },
+      { label: "Live demo", href: "https://ocbc-trust-ladder.vercel.app/", enabled: true },
+    ],
+  },
+  {
+    title: "+1lean Wellness Tracker",
+    category: "Full stack",
+    context: "Personal project",
+    summary: "A community fitness tracker with meal photos, workout posts, leaderboards and optional step sync from a phone.",
+    points: [],
+    stack: ["Next.js", "TypeScript", "PostgreSQL", "Capacitor"],
+    links: [{ label: "Code", href: "https://github.com/chonghaoooi/roblox-wellness-site", enabled: true }],
+  },
+  {
+    title: "CCAbot",
+    category: "AI",
+    context: "Personal project",
+    summary: "A Discord bot for club event announcements and reminders. It can extract event details from pasted text, public forms and screenshots.",
+    points: [],
+    stack: ["Python", "discord.py", "Ollama", "Tesseract"],
+    links: [{ label: "Code", href: "https://github.com/chonghaoooi/ccabot", enabled: true }],
+  },
+  {
+    title: "Local Form Autofill",
+    category: "Full stack",
+    context: "Browser extension",
+    summary: "A browser extension that fills recurring Google and Microsoft Forms from a profile stored on the device.",
+    points: [],
+    stack: ["TypeScript", "Browser extensions"],
+    links: [{ label: "Code", href: "https://github.com/chonghaoooi/auto-fill-forms", enabled: true }],
+  },
+  {
+    title: "Cashbux Market Sim",
+    category: "Full stack",
+    context: "Team project",
+    summary: "A stock-market simulator with real-time team and organiser dashboards for school investing events on a local network.",
+    points: [],
+    stack: ["React", "TypeScript", "Socket.IO", "SQLite"],
+    links: [{ label: "Code", href: "https://github.com/chonghaoooi/smuhackathon", enabled: true }],
+  },
+];
+
+const linkedInProfile = contact[0].href;
+
+export const hackathons: Hackathon[] = [
+  {
+    title: "OCBC Ignite Challenge",
+    date: "2026",
+    summary: "Built TrustLadder, a banking-agent review prototype with human approvals.",
+    links: [{ label: "Project", href: "https://github.com/chonghaoooi/OCBC-Trust-Ladder", enabled: true }],
+  },
+  {
+    title: "MAJU Hackathon",
+    date: "Sep 2026",
+    summary: "Built kaki, a community app for helping students find activities and make connections.",
+    links: [
+      { label: "Project", href: "https://github.com/chonghaoooi/kaki", enabled: true },
+      { label: "Event", href: "https://luma.com/1g4iwyst", enabled: true },
+    ],
+  },
+  {
+    title: "TheFirst Spark: Youth Symposium",
+    date: "Jun 2026",
+    summary: "Co-built RoadRunners, a learning app with branching roadmaps and interactive coding lessons.",
+    links: [{ label: "Submission", href: "https://devpost.com/software/roadrunners-zojclf", enabled: true }],
+  },
+  {
+    title: "Dell InnovateDash",
+    date: "Jun 2026",
+    summary: "Finalist with MemWorker, a casework prototype for the Singapore Children's Society challenge.",
+    links: [{ label: "Project", href: "https://github.com/NachikethReddyY/MemWorker", enabled: true }],
+  },
+  {
+    title: "Ralphthon @SG",
+    date: "May 2026",
+    summary: "Co-built Lumina, a prototype for triaging and assigning GitHub issues.",
+    links: [
+      { label: "Team recap", href: "https://www.linkedin.com/posts/cj-tee_today-i-and-friends-yeddula-nachiketh-reddy-activity-7461801348322234368-y_d7", enabled: true },
+    ],
+  },
+  {
+    title: "Autodesk Singapore AI Hackathon",
+    date: "Mar to Apr 2026",
+    summary: "Prototyped an AI-assisted solution with Autodesk engineers and Singapore Polytechnic students.",
+    links: [{ label: "LinkedIn", href: linkedInProfile, enabled: true }],
+  },
+  {
+    title: "PolyFinTech100 API Hackathon",
+    date: "2025",
+    summary: "Participated in the API hackathon for polytechnic students.",
+    links: [
+      { label: "LinkedIn", href: linkedInProfile, enabled: true },
+      { label: "Event", href: "https://polyfintech100hackathon.sg/home-2025/", enabled: true },
+    ],
+  },
+  {
+    title: "BuildingBloCS March Conference",
+    date: "Mar 2025",
+    summary: "Took part in a Python and data science conference that concluded with a biodiversity hackathon.",
+    links: [{ label: "LinkedIn", href: linkedInProfile, enabled: true }],
+  },
+  {
+    title: "Singapore Informatics League",
+    date: "2025",
+    summary: "Competed in the programming contest with Singapore Polytechnic team J.A.C.",
+    links: [{ label: "Scoreboard", href: "https://sginfoleague.org/archives/2025/scoreboard.pdf", enabled: true }],
   },
 ];
 

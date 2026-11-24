@@ -9,9 +9,12 @@ import {
   contact,
   education,
   experience,
+  hackathons,
   profile,
+  projectCategories,
   projects,
   skills,
+  type Link,
   type Project,
 } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
@@ -56,8 +59,30 @@ function Logos() {
   );
 }
 
+function ExternalLinks({ links, subject }: { links: Link[]; subject: string }) {
+  const enabledLinks = links.filter((link) => link.enabled);
+  if (enabledLinks.length === 0) return null;
+
+  return (
+    <ul className="mt-2 flex flex-wrap gap-x-4 text-sm">
+      {enabledLinks.map((link) => (
+        <li key={link.href}>
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block py-2 font-medium underline decoration-muted-foreground/50 underline-offset-4 hover:decoration-current"
+          >
+            {link.label}
+            <span className="sr-only"> for {subject} (opens in a new tab)</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Article({ project, lead }: { project: Project; lead?: boolean }) {
-  const links = project.links.filter((link) => link.enabled);
   return (
     <article
       className={cn(
@@ -89,35 +114,19 @@ function Article({ project, lead }: { project: Project; lead?: boolean }) {
           {project.title}
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{project.summary}</p>
-        <ul className="mt-3 space-y-2 text-sm leading-6">
-          {project.points.map((point) => (
-            <li key={point}>{point}</li>
-          ))}
-        </ul>
-        <p className="mt-3 font-mono text-xs leading-5 text-muted-foreground">
-          {project.stack.map((tool, i) => (
-            <span key={tool}>
-              {i > 0 && ", "}
-              <span className="whitespace-nowrap">{tool}</span>
-            </span>
-          ))}
-        </p>
-        {links.length > 0 && (
-          <p className="mt-2 flex gap-4 text-sm">
-            {links.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="py-2 font-medium underline decoration-muted-foreground/50 underline-offset-4 hover:decoration-current"
-              >
-                {link.label}
-                <span className="sr-only"> for {project.title} (opens in a new tab)</span>
-              </a>
+        {project.points.length > 0 && (
+          <ul className="mt-3 space-y-2 text-sm leading-6">
+            {project.points.map((point) => (
+              <li key={point}>{point}</li>
             ))}
+          </ul>
+        )}
+        {project.stack.length > 0 && (
+          <p className="mt-3 font-mono text-xs leading-5 text-muted-foreground">
+            {project.stack.join(", ")}
           </p>
         )}
+        <ExternalLinks links={project.links} subject={project.title} />
       </div>
     </article>
   );
@@ -139,12 +148,28 @@ function News({ items }: { items: Project[] }) {
   );
 }
 
-const categories = ["Full stack", "AI", "Data"] as const;
-const newsTabs: string[] = ["Projects", ...categories];
+const newsTabs: string[] = ["Projects", ...projectCategories];
 
 const tabs: { name: string; content: React.ReactNode }[] = [
   { name: "Projects", content: <News items={projects} /> },
-  ...categories.map((category) => ({
+  {
+    name: "Hackathons",
+    content: (
+      <ol className="-my-5 divide-y">
+        {hackathons.map((event) => (
+          <li key={event.title} className="grid gap-1 py-5 sm:grid-cols-[9rem_1fr]">
+            <p className="font-mono text-xs leading-7 text-muted-foreground">{event.date}</p>
+            <div>
+              <h2 className="text-lg leading-7 font-semibold tracking-[-0.02em]">{event.title}</h2>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">{event.summary}</p>
+              <ExternalLinks links={event.links} subject={event.title} />
+            </div>
+          </li>
+        ))}
+      </ol>
+    ),
+  },
+  ...projectCategories.map((category) => ({
     name: category,
     content: <News items={projects.filter((project) => project.category === category)} />,
   })),

@@ -1,5 +1,6 @@
 import { Mail } from "lucide-react";
 import Image from "next/image";
+import { ProjectGrid } from "@/components/project-grid";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -86,8 +87,8 @@ function Article({ project, lead }: { project: Project; lead?: boolean }) {
   return (
     <article
       className={cn(
-        "bg-card p-5 sm:p-6",
-        lead && "col-span-full grid items-center gap-5 sm:grid-cols-2 sm:gap-8",
+        "h-full bg-card p-5 sm:p-6",
+        lead && "grid items-center gap-5 sm:grid-cols-2 sm:gap-8",
       )}
     >
       {lead && project.image && (
@@ -132,26 +133,16 @@ function Article({ project, lead }: { project: Project; lead?: boolean }) {
   );
 }
 
-function News({ items }: { items: Project[] }) {
-  const lead = items.find((project) => project.image);
-  const rest = items.filter((project) => project !== lead);
-  // The 1px grid gap over a border-coloured background draws the newspaper rules.
-  return (
-    <div
-      className={cn("-mb-px grid gap-px border-b bg-border sm:grid-cols-2", rest.length > 2 && "md:grid-cols-3")}
-    >
-      {lead && <Article project={lead} lead />}
-      {rest.map((project) => (
-        <Article key={project.title} project={project} />
-      ))}
-    </div>
-  );
-}
-
-const newsTabs: string[] = ["Projects", ...projectCategories];
+const featuredProject = projects.find((project) => project.image);
+const projectCards = projects.map((project) => ({
+  title: project.title,
+  category: project.category,
+  featured: project === featuredProject,
+  content: <Article project={project} lead={project === featuredProject} />,
+}));
 
 const tabs: { name: string; content: React.ReactNode }[] = [
-  { name: "Projects", content: <News items={projects} /> },
+  { name: "Projects", content: <ProjectGrid cards={projectCards} categories={projectCategories} /> },
   {
     name: "Hackathons",
     content: (
@@ -169,14 +160,16 @@ const tabs: { name: string; content: React.ReactNode }[] = [
       </ol>
     ),
   },
-  ...projectCategories.map((category) => ({
-    name: category,
-    content: <News items={projects.filter((project) => project.category === category)} />,
-  })),
   {
     name: "About",
-    content: (
-      <div className="gap-8 space-y-4 leading-7 [column-rule:1px_solid_var(--border)] sm:columns-2">
+    content: <About />,
+  },
+];
+
+function About() {
+  return (
+    <div className="divide-y">
+      <div className="gap-8 space-y-4 pb-6 leading-7 [column-rule:1px_solid_var(--border)] sm:columns-2">
         {about.map((text) => (
           <p key={text}>{text}</p>
         ))}
@@ -197,66 +190,60 @@ const tabs: { name: string; content: React.ReactNode }[] = [
           </dl>
         </div>
       </div>
-    ),
-  },
-  {
-    name: "Skills",
-    content: (
-      <dl className="-my-5 divide-y">
-        {skills.map(({ group, items }) => (
-          <div key={group} className="grid gap-3 py-5 sm:grid-cols-[12rem_1fr]">
-            <dt className="leading-6 font-medium">{group}</dt>
-            <dd className="flex flex-wrap gap-2">
-              {items.map((item) => (
-                <Badge key={item} variant="secondary" className="h-6 font-normal">
-                  {item}
-                </Badge>
-              ))}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    ),
-  },
-  {
-    name: "Experience",
-    content: (
-      <ol className="-my-6 divide-y">
-        {experience.map((item) => (
-          <li key={item.role} className="grid gap-2 py-6 sm:grid-cols-[12rem_1fr]">
-            <p className="font-mono text-xs leading-7 text-muted-foreground">{item.date}</p>
-            <div>
-              <h2 className="text-lg leading-7 font-semibold tracking-[-0.02em]">{item.role}</h2>
-              <p className="text-muted-foreground">{item.org}</p>
-              {item.points.map((point) => (
-                <p key={point} className="mt-3 leading-6">
-                  {point}
-                </p>
-              ))}
+      <section className="py-6" aria-labelledby="skills">
+        <h2 id="skills" className="text-xl font-semibold tracking-tight">Skills</h2>
+        <dl className="mt-4 space-y-4">
+          {skills.map(({ group, items }) => (
+            <div key={group} className="grid gap-2 sm:grid-cols-[12rem_1fr]">
+              <dt className="leading-6 font-medium">{group}</dt>
+              <dd className="flex flex-wrap gap-2">
+                {items.map((item) => (
+                  <Badge key={item} variant="secondary" className="h-6 font-normal">
+                    {item}
+                  </Badge>
+                ))}
+              </dd>
             </div>
-          </li>
-        ))}
-      </ol>
-    ),
-  },
-  {
-    name: "Certifications",
-    content: (
-      <div className="grid gap-8 sm:grid-cols-3">
-        {certifications.map(({ group, items }) => (
-          <div key={group}>
-            <h2 className="text-lg font-semibold tracking-[-0.02em]">{group}</h2>
-            <ul className="mt-3 space-y-2 leading-6">
-              {items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-];
+          ))}
+        </dl>
+      </section>
+      <section className="py-6" aria-labelledby="experience">
+        <h2 id="experience" className="text-xl font-semibold tracking-tight">Experience</h2>
+        <ol className="mt-4 space-y-6">
+          {experience.map((item) => (
+            <li key={item.role} className="grid gap-1 sm:grid-cols-[12rem_1fr]">
+              <p className="font-mono text-xs leading-7 text-muted-foreground">{item.date}</p>
+              <div>
+                <h3 className="text-lg leading-7 font-semibold tracking-[-0.02em]">{item.role}</h3>
+                <p className="text-muted-foreground">{item.org}</p>
+                {item.points.map((point) => (
+                  <p key={point} className="mt-3 leading-6">
+                    {point}
+                  </p>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section className="pt-6" aria-labelledby="certifications">
+        <h2 id="certifications" className="text-xl font-semibold tracking-tight">Certifications</h2>
+        <div className="mt-4 grid gap-6 sm:grid-cols-3">
+          {certifications.map(({ group, items }) => (
+            <div key={group}>
+              <h3 className="font-semibold">{group}</h3>
+              <ul className="mt-2 space-y-2 leading-6">
+                {items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -283,13 +270,13 @@ export default function Home() {
       <main className="mb-4 flex min-h-[calc(75svh-1rem)] flex-col rounded-xl border bg-card text-card-foreground">
         <Tabs defaultValue="Projects" className="grow gap-0">
           <div className="sticky top-0 z-10 flex items-center rounded-t-xl border-b bg-card pr-2">
-            <div className="min-w-0 grow overflow-x-auto [scrollbar-width:none] max-md:mask-r-from-85%">
-              <TabsList variant="line" aria-label="Categories" className="h-12! px-2">
+            <div className="min-w-0 grow overflow-x-auto [scrollbar-width:none]">
+              <TabsList variant="line" aria-label="Portfolio sections" className="h-12! px-2">
                 {tabs.map(({ name }) => (
                   <TabsTrigger
                     key={name}
                     value={name}
-                    className="h-12 px-2.5 text-muted-foreground -outline-offset-4! after:bottom-0! md:px-3"
+                    className="h-12 px-1.5 text-muted-foreground -outline-offset-4! after:bottom-0! sm:px-3"
                   >
                     {name}
                   </TabsTrigger>
@@ -302,7 +289,8 @@ export default function Home() {
             <TabsContent
               key={name}
               value={name}
-              className={cn("overflow-hidden rounded-b-xl", !newsTabs.includes(name) && "p-5 sm:p-6")}
+              keepMounted={name === "Projects"}
+              className={cn("overflow-hidden rounded-b-xl", name !== "Projects" && "p-5 sm:p-6")}
             >
               {content}
             </TabsContent>
